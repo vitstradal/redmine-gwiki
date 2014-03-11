@@ -1,18 +1,32 @@
-<div class="contextual">
-
 <% content_for :header_tags do %>
   <%=  stylesheet_link_tag('gwiki.css', :plugin => 'redmine_gwiki') %>
 <% end %>
 
-<% if @editable %>
-  <%= link_to_if_authorized(
-        l(:button_edit),
-        {:action => 'edit', :id => @page_path},
-        :class => 'icon icon-edit',
-        :accesskey => accesskey(:edit))
-  %>
-<% end %>
-</div>
-<div class="wiki wiki-page">
-<%== @page_html %>
-</div> 
+<% if  @edit %>
+
+  <%= form_tag  project_gwiki_update_path(:id => @page_path), :method => "post" do %>
+    <%= hidden_field_tag :version, @version %>
+    <%= text_area_tag :page_text, @page_text, :class => "wiki-edit", :cols => 100, :rows => 25 %>
+    <p><%= submit_tag(l(:button_save)) %></p>
+  <% end %>
+
+<% else # not 'edit', but 'view' %>
+
+  <div class="contextual">
+    <% if @editable %>
+      <%= link_to_if_authorized(
+          l(:button_edit),
+          { :action => 'show',
+  	  :id => @page_path,
+  	  :edit =>  :me,
+  	},
+          :class => 'icon icon-edit',
+          :accesskey => accesskey(:edit))
+      %>
+    <% end %>
+  </div>
+  
+  <div class="wiki wiki-page">
+  <%== @page_html %>
+  </div> 
+<% end # edit %>

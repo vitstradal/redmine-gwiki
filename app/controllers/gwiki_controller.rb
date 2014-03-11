@@ -8,22 +8,27 @@ class GwikiController < ApplicationController
   @@parser = TracWiki.parser(edit_heading: true)
 
   def index
-    redirect_to :action => :show, :id => @giwi.default_page
+    redirect_to :action => :show, :id => @gwiki.default_page
   end
 
   def show
     @editable = true
     id =  params[:id]
+    @edit =  params[:edit]
+
+    return _handle_edit if @edit
+
     if id =~ /\.png$/
       return _handle_file(id)
     end
+
 
     @page_path = _get_page_path(id)
     @page_text, @version = @giwi.get_page(@page_path)
 
     if @page_text.nil?
       return redirect_to id: @giwi.directory + id + '/' + @gwiki.default_page if @giwi.dir?(@gwiki.directory + id) && @gwiki.default_page != ''
-      return redirect_to action: :edit, id: id
+      return redirect_to  edit: :me, id: id
     end
 
     @page_html = @@parser.to_html(@page_text)
@@ -33,14 +38,6 @@ class GwikiController < ApplicationController
     end
   end
 
-  def edit
-    id = params[:id]
-    @page_path = _get_page_path(id)
-    @page_text, @version = @giwi.get_page(@page_path)
-    if @page_text.nil?
-      @page_text, @version = ["== #{id} ==\n\n",'']
-    end
-  end
 
   def update
     @page_path = params[:id]
@@ -54,6 +51,15 @@ class GwikiController < ApplicationController
   end
 
   private
+
+  def _handle_edit
+    id = params[:id]
+    @page_path = _get_page_path(id)
+    @page_text, @version = @giwi.get_page(@page_path)
+    if @page_text.nil?
+      @page_text, @version = ["== #{id} ==\n\n",'']
+    end
+  end
 
   def _get_page_path(id)
     @gwiki.directory + id + @gwiki.ext
