@@ -78,7 +78,7 @@ class Giwi
     return nil if ! blob.is_a? Grit::Blob
 
     text = blob.data.force_encoding('utf-8').encode
-    return [ text, tree.id]
+    return [ text, blob.id ]
   end
 
 
@@ -150,21 +150,14 @@ class Giwi
   def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
 
     cur_head = @repo.commits(@branch, 1).first
-
-    #print "commit_id: #{commit_id}\n"
-    #text_head = @repo.commit(commit_id)
-    #cur_head = @repo.commits.first
-    #cur_tree = cur_head.tree @branch
-
     cur_tree = @repo.tree @branch
 
     status = SETPAGE_OK
 
     if commit_id != ''
       # not new file
-      text_tree =  @repo.tree commit_id
 
-      text_blob = text_tree / path
+      text_blob = @repo.blob commit_id
       raise "no path #{path}" if ! text_blob.is_a? Grit::Blob
       cur_blob  = cur_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')
@@ -207,17 +200,17 @@ class Giwi
     else
       comment = "file: #{path}"
     end
+
+
     comment = comment.force_encoding('ASCII-8BIT')
 
     actor = Grit::Actor.from_string(email)
 
-    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
+    id = index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
     return status
   end
 
   private
-
-
 
   # replace in +text_orig+, lines from +sline+ to  +eline+ with +text+
   # first line is 1 

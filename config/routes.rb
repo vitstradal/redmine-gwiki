@@ -1,4 +1,4 @@
 resources :projects do
-  resources :gwiki_wiki
-  resource  :gwiki
+  resources :gwiki
+  resource  :gwiki_wiki
 end

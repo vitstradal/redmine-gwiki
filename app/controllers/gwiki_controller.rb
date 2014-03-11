@@ -5,34 +5,58 @@ class GwikiController < ApplicationController
 
   before_filter :find_project, :find_wiki, :authorize
 
+  @@parser = TracWiki.parser(edit_heading: true)
+
   def index
-    redirect_to :action => :show, :id => "Home"
+    redirect_to :action => :show, :id => @giwi.default_page
   end
 
   def show
-    path = params[:id]
-    @text, @version = @giwi.get_page(path)
-    parser = TracWiki.parser(_trac_wiki_options(base))
-    @html = parser.to_html(@text)
-    @headings = parser.headings
-    if parser.headings.size > 3
-      @toc = parser.make_toc_html
+    @editable = true
+    id =  params[:id]
+    if id =~ /\.png$/
+      return _handle_file(id)
+    end
+
+    @page_path = _get_page_path(id)
+    @page_text, @version = @giwi.get_page(@page_path)
+
+    if @page_text.nil?
+      return redirect_to id: @giwi.directory + id + '/' + @gwiki.default_page if @giwi.dir?(@gwiki.directory + id) && @gwiki.default_page != ''
+      return redirect_to action: :edit, id: id
+    end
+
+    @page_html = @@parser.to_html(@page_text)
+    @headings = @@parser.headings
+    if @@parser.headings.size > 3
+      @toc = @@parser.make_toc_html
     end
   end
 
   def edit
+    id = params[:id]
+    @page_path = _get_page_path(id)
+    @page_text, @version = @giwi.get_page(@page_path)
+    if @page_text.nil?
+      @page_text, @version = ["== #{id} ==\n\n",'']
+    end
   end
 
   def update
+    @page_path = params[:id]
+    @page_text = params[:page_text]
+    @version = params[:version]
+    @user = User.current
+
+    # status = @giwi.set_page(@path + @giwi.ext, text, version, email, sline , eline)
+    status = @giwi.set_page(@page_path, @page_text, @version, @user.mail )
+    redirect_to action: :show , id: @page_path
   end
 
   private
 
-  def show_page(name)
-  end
-
-  def project_repository_path
-    return @project.gollum_wiki.git_path
+  def _get_page_path(id)
+    @gwiki.directory + id + @gwiki.ext
   end
 
   def find_project
@@ -45,11 +69,10 @@ class GwikiController < ApplicationController
   end
 
   def find_wiki
-    git_path = project_repository_path
-    options = {}
-    @giki = Giki.new(@project.id, options)
-    #@giwi = Giwi.get_giwi(@wiki)
-
-
+    @gwiki = @project.gwiki_wiki
+    @giwi = Giwi.new(@project.id.to_s, :path   => @gwiki.git_path,
+                                       :bare   => @gwiki.is_bare,
+                                       :branch => @gwiki.branch,
+                                       )
   end
 end

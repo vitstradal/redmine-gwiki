@@ -1,0 +1,35 @@
+<%= form_for @gwiki_wiki, :url => { :controller => 'gwiki_wikis', :action=> 'update', :project_id => @project } do |f| %>
+
+<div class="box tabular">
+  <p>
+    <%= label(:gwiki_wiki, :git_path) %>
+    <%= f.text_field :git_path %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :branch) %>
+    <%=  f.text_field :branch  %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :ext) %>
+    <%=  f.text_field :ext  %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :default_page) %>
+    <%= f.text_field :default_page %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :page_files_directory) %>
+    <%= f.text_field :directory %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :is_fs) %>
+    <%=  f.check_box :is_fs  %>
+  </p>
+  <p>
+    <%= label(:gwiki_wiki, :is_bare) %>
+    <%=  f.check_box :is_bare  %>
+  </p>
+</div>
+
+  <p><%= f.submit %></p>
+<% end %>

@@ -20,7 +20,7 @@ class GwikiWikisController < ApplicationController
     else
       flash[:error] = t(:gwiki_wiki_update_error)
     end
-    redirect_to(:controller=>'projects', :action=>'settings', :id=>@project, :tab=>'gwiki')
+    redirect_to(:controller => 'projects', :action => 'settings', :id => @project, :tab => 'gwiki')
   end
 
   def find_project

@@ -5,9 +5,9 @@ Rails.configuration.to_prepare do
   require 'trac-wiki'
 
 #  # project model should be patched before projects controller
-#  Project.send(:include, GollumProjectModelPatch) unless Project.included_modules.include?(GollumProjectModelPatch)
-#  ProjectsController.send(:include, GollumProjectsControllerPatch) unless ProjectsController.included_modules.include?(GollumProjectsControllerPatch)
-#  ProjectsHelper.send(:include, GollumProjectsHelperPatch) unless ProjectsHelper.included_modules.include?(GollumProjectsHelperPatch)
+  Project.send(:include, GwikiProjectModelPatch) unless Project.included_modules.include?(GwikiProjectModelPatch)
+  ProjectsController.send(:include, GwikiProjectsControllerPatch) unless ProjectsController.included_modules.include?(GwikiProjectsControllerPatch)
+  ProjectsHelper.send(:include, GwikiProjectsHelperPatch) unless ProjectsHelper.included_modules.include?(GwikiProjectsHelperPatch)
 end
 
 Redmine::Plugin.register :redmine_gwiki do
@@ -16,10 +16,10 @@ Redmine::Plugin.register :redmine_gwiki do
   description 'Gwiki: trac-wiki with git backed plugin for redmine'
 
   # use git to get version name
-  repo = Grit::Repo.new("#{Rails.root}/plugins/redmine-trac-wiki/.git")
+  repo = Grit::Repo.new("#{Rails.root}/plugins/redmine_gwiki/.git")
   version repo.recent_tag_name('HEAD', :tags=>true)
 
-  url 'https://github.com/vitstradal/redmine-trac-wiki-git/'
+  url 'https://github.com/vitstradal/redmine-gwiki/'
   author_url 'http://vitas.matfyz.cz'
 
   requires_redmine :version_or_higher => '2.0.2'
@@ -34,7 +34,7 @@ Redmine::Plugin.register :redmine_gwiki do
     permission :add_gwiki_pages,    :gwiki => [:new, :create]
     permission :edit_gwiki_pages,   :gwiki => [:edit, :update]
     permission :delete_gwiki_pages, :gwiki => [:destroy]
-    permission :manage_gwiki_git,   :gwiki_wikis => [:index,:show, :create, :update]
+    permission :manage_gwiki_wiki,  :gwiki_wikis => [:index,:show, :create, :update]
   end
 
   menu :project_menu, :gwiki, { :controller => :gwiki, :action => :index }, :caption => 'GWiki', :before => :wiki, :param => :project_id
