@@ -1,0 +1,20 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    diff-lcs (1.2.5)
+    grit (2.5.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+    mime-types (1.25.1)
+    posix-spawn (0.3.8)
+    trac-wiki (0.3.10)
+    unicode_utils (1.4.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  grit (~> 2.5.0)
+  trac-wiki (~> 0.3.0)
+  unicode_utils
