@@ -8,7 +8,7 @@ class GwikiController < ApplicationController
   @@parser = TracWiki.parser(edit_heading: true)
 
   def index
-    redirect_to :action => :show, :id => @gwiki.default_page
+    redirect_to project_gwiki_show_path(@project.id, @gwiki.default_page)
   end
 
   def show
