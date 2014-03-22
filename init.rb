@@ -5,37 +5,37 @@ Rails.configuration.to_prepare do
   require 'trac-wiki'
 
 #  # project model should be patched before projects controller
-  Project.send(:include, GwikiProjectModelPatch) unless Project.included_modules.include?(GwikiProjectModelPatch)
-  ProjectsController.send(:include, GwikiProjectsControllerPatch) unless ProjectsController.included_modules.include?(GwikiProjectsControllerPatch)
-  ProjectsHelper.send(:include, GwikiProjectsHelperPatch) unless ProjectsHelper.included_modules.include?(GwikiProjectsHelperPatch)
+  Project.send(:include, WigiProjectModelPatch) unless Project.included_modules.include?(WigiProjectModelPatch)
+  ProjectsController.send(:include, WigiProjectsControllerPatch) unless ProjectsController.included_modules.include?(WigiProjectsControllerPatch)
+  ProjectsHelper.send(:include, WigiProjectsHelperPatch) unless ProjectsHelper.included_modules.include?(WigiProjectsHelperPatch)
 end
 
-Redmine::Plugin.register :redmine_gwiki do
+Redmine::Plugin.register :redmine_wigi do
   name 'Redmine Git (trac) wiki plugin'
   author 'vitas  <vitas@matfyz.cz>'
-  description 'Gwiki: trac-wiki with git backed plugin for redmine'
+  description 'Wigi: trac-wiki with git backed plugin for redmine'
 
   # use git to get version name
-  repo = Grit::Repo.new("#{Rails.root}/plugins/redmine_gwiki/.git")
+  repo = Grit::Repo.new("#{Rails.root}/plugins/redmine_wigi/.git")
   version repo.recent_tag_name('HEAD', :tags=>true)
 
-  url 'https://github.com/vitstradal/redmine-gwiki/'
+  url 'https://github.com/vitstradal/redmine-wigi/'
   author_url 'http://vitas.matfyz.cz'
 
   requires_redmine :version_or_higher => '2.0.2'
 
   settings :default => {
-                       :gwiki_base_path => Pathname.new(Rails.root + "gwiki")
+                       :wigi_base_path => Pathname.new(Rails.root + "wigi")
                        },
            :partial => 'shared/settings'
 
-  project_module :gwiki do
-    permission :view_gwiki_pages,   :gwiki => [:index, :show]
-    permission :add_gwiki_pages,    :gwiki => [:new, :create]
-    permission :edit_gwiki_pages,   :gwiki => [:edit, :update]
-    permission :delete_gwiki_pages, :gwiki => [:destroy]
-    permission :manage_gwiki_wiki,  :gwiki_wikis => [:index,:show, :create, :update]
+  project_module :wigi do
+    permission :view_wigi_pages,   :wigi => [:index, :show]
+    permission :add_wigi_pages,    :wigi => [:new, :create]
+    permission :edit_wigi_pages,   :wigi => [:edit, :update]
+    permission :delete_wigi_pages, :wigi => [:destroy]
+    permission :manage_wigi_wiki,  :wigi_wikis => [:index,:show, :create, :update]
   end
 
-  menu :project_menu, :gwiki, { :controller => :gwiki, :action => :index }, :caption => 'GWiki', :before => :wiki, :param => :project_id
+  menu :project_menu, :wigi, { :controller => :wigi, :action => :index }, :caption => 'wigi', :before => :wiki, :param => :project_id
 end

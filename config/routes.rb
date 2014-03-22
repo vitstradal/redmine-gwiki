@@ -1,6 +1,6 @@
 resources :projects do
-  resource  :gwiki_wiki
-  get  '/gwiki/*id', to: 'gwiki#show',   constrains: { id: /.*/}, as: 'gwiki_show'
-  post '/gwiki/*id', to: 'gwiki#update', constrains: { id: /.*/}, as: 'gwiki_update'
-  get  '/gwiki',     to: 'gwiki#index', as: 'gwiki_index'
+  resource  :wigi_wiki
+  get  '/wigi/*id', to: 'wigi#show',   constrains: { id: /.*/}, as: 'wigi_show'
+  post '/wigi/*id', to: 'wigi#update', constrains: { id: /.*/}, as: 'wigi_update'
+  get  '/wigi',     to: 'wigi#index', as: 'wigi_index'
 end

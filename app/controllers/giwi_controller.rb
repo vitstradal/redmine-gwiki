@@ -1,6 +1,6 @@
 require_dependency 'user'
 
-class GwikiController < ApplicationController
+class WigiController < ApplicationController
   unloadable
 
   before_filter :find_project, :find_wiki, :authorize
@@ -8,7 +8,7 @@ class GwikiController < ApplicationController
   @@parser = TracWiki.parser(edit_heading: true)
 
   def index
-    redirect_to project_gwiki_show_path(@project.id, @gwiki.default_page)
+    redirect_to project_wigi_show_path(@project.id, @wigi.default_page)
   end
 
   def show
@@ -22,12 +22,11 @@ class GwikiController < ApplicationController
       return _handle_file(id)
     end
 
-
     @page_path = _get_page_path(id)
     @page_text, @version = @giwi.get_page(@page_path)
 
     if @page_text.nil?
-      return redirect_to id: @giwi.directory + id + '/' + @gwiki.default_page if @giwi.dir?(@gwiki.directory + id) && @gwiki.default_page != ''
+      return redirect_to id: @giwi.directory + id + '/' + @wigi.default_page if @giwi.dir?(@wigi.directory + id) && @wigi.default_page != ''
       return redirect_to  edit: :me, id: id
     end
 
@@ -53,16 +52,38 @@ class GwikiController < ApplicationController
   private
 
   def _handle_edit
-    id = params[:id]
-    @page_path = _get_page_path(id)
-    @page_text, @version = @giwi.get_page(@page_path)
-    if @page_text.nil?
-      @page_text, @version = ["== #{id} ==\n\n",'']
+    if @edit == 'me'
+       # edit whole page
+       @page_text, @version = @giwi.get_page(@path + @giwi.ext)
+       @edit = true
+       return
+    end
+
+    die "wrong edit value" if @edit !~  /^\d+$/
+
+    # want to edit only one chapter
+    @part = @edit.to_i
+
+    text, @version = @giwi.get_page(@path + @giwi.ext)
+
+    if text
+      parser = TracWiki.parser(math: true, merge: true,  no_escape: true, allow_html: true,)
+      parser.to_html(text)
+      heading = parser.headings[@part]
+      if heading
+        # edit only selected part (from @sline to @eline)
+        @page_text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
+        @sline = heading[:sline]
+        @eline = heading[:eline]
+      else
+        # edit all document anyway
+        @part = nil
+      end
     end
   end
 
   def _get_page_path(id)
-    @gwiki.directory + id + @gwiki.ext
+    @wigi.directory + id + @wigi.ext
   end
 
   def find_project
@@ -75,10 +96,10 @@ class GwikiController < ApplicationController
   end
 
   def find_wiki
-    @gwiki = @project.gwiki_wiki
-    @giwi = Giwi.new(@project.id.to_s, :path   => @gwiki.git_path,
-                                       :bare   => @gwiki.is_bare,
-                                       :branch => @gwiki.branch,
+    @wigi = @project.wigi_wiki
+    @giwi = Giwi.new(@project.id.to_s, :path   => @wigi.git_path,
+                                       :bare   => @wigi.is_bare,
+                                       :branch => @wigi.branch,
                                        )
   end
 end

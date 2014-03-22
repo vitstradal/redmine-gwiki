@@ -1,10 +1,10 @@
 <% content_for :header_tags do %>
-  <%=  stylesheet_link_tag('gwiki.css', :plugin => 'redmine_gwiki') %>
+  <%=  stylesheet_link_tag('wigi.css', :plugin => 'redmine_wigi') %>
 <% end %>
 
 <% if  @edit %>
 
-  <%= form_tag  project_gwiki_update_path(:id => @page_path), :method => "post" do %>
+  <%= form_tag  project_wigi_update_path(:id => @page_path), :method => "post" do %>
     <%= hidden_field_tag :version, @version %>
     <%= text_area_tag :page_text, @page_text, :class => "wiki-edit", :cols => 100, :rows => 25 %>
     <p><%= submit_tag(l(:button_save)) %></p>

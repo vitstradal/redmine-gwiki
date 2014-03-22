@@ -1,8 +1,8 @@
-class CreateGwikiWikis < ActiveRecord::Migration
+class CreateWigiWikis < ActiveRecord::Migration
   def self.up
-    create_table :gwiki_wikis do |t|
+    create_table :wigi_wikis do |t|
       t.references :project
-      t.string :git_path
+      t.string  :git_path
       t.string  :default_page,:default=>'index'
       t.string  :directory, :default => 'doc/'
       t.string  :ext,       :default => '.txt'
@@ -12,6 +12,6 @@ class CreateGwikiWikis < ActiveRecord::Migration
     end
   end
   def self.down
-    drop_table :gwiki_wikis
+    drop_table :wigi_wikis
   end
 end

@@ -2,7 +2,7 @@
 OBSOLETE!
 
 <!--
-<%= form_tag  project_gwiki_path(:id => @page_path), :method => "put" do %>
+<%= form_tag  project_wigi_path(:id => @page_path), :method => "put" do %>
   <%= hidden_field_tag :version, @version %>
   <%= text_area_tag :page_text, @page_text, :class => "wiki-edit", :cols => 100, :rows => 25 %>
   <p><%= submit_tag(l(:button_save)) %></p>
